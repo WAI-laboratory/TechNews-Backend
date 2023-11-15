@@ -49,7 +49,13 @@ function selectAndPost() {
                             }
                             else {
                                 body = JSON.parse(body);
-                                resolve({ title: body.title, url: body.url, score: body.score, author: body.by });
+                                resolve({
+                                    title: body.title,
+                                    url: body.url,
+                                    score: body.score,
+                                    author: body.by,
+                                    time: body.time,
+                                });
                             }
                         });
                     }));

@@ -28,7 +28,7 @@ let CONFIG: Config = {
     "fallback": "Newsbot: Your automated news aggregator."
 };
 
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (req: express.Request, res: express.Response) => {
     selectAndPost().then(data => {
         res.json(data);
     }).catch(err => {
@@ -36,7 +36,7 @@ app.get('/', (req: Request, res: Response) => {
     });
 });
 
-app.post('/', (req: Request, res: Response) => {
+app.post('/', (req: express.Request, res: express.Response) => {
     selectAndPost();
     res.send(`Post Hello World!`);
 });
@@ -60,7 +60,13 @@ function selectAndPost(): Promise<any[]> {
                                 reject(err);
                             } else {
                                 body = JSON.parse(body);
-                                resolve({ title: body.title, url: body.url, score: body.score, author: body.by });
+                                resolve({ 
+                                    title: body.title, 
+                                    url: body.url, 
+                                    score: body.score, 
+                                    author: body.by,
+                                    time: body.time,                                
+                                });
                             }
                         });
                     }));
