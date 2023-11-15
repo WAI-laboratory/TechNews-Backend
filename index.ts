@@ -9,25 +9,6 @@ const port = process.env.PORT || 8080;
 
 let topStories = 'https://hacker-news.firebaseio.com/v0/topstories.json';
 
-interface Config {
-    webhook_url: string;
-    channel: string;
-    bot_username: string;
-    bot_icon_emoji: string;
-    post_color: string;
-    fallback: string;
-    retry?: boolean;
-}
-
-let CONFIG: Config = {
-    "webhook_url": "",
-    "channel": "#general",
-    "bot_username": "HackerNewsBot",
-    "bot_icon_emoji": ":newspaper:",
-    "post_color": "#FF6600",
-    "fallback": "Newsbot: Your automated news aggregator."
-};
-
 app.get('/', (req: express.Request, res: express.Response) => {
     selectAndPost().then(data => {
         res.json(data);

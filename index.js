@@ -9,14 +9,6 @@ const request_1 = __importDefault(require("request"));
 const app = (0, express_1.default)();
 const port = process.env.PORT || 8080;
 let topStories = 'https://hacker-news.firebaseio.com/v0/topstories.json';
-let CONFIG = {
-    "webhook_url": "",
-    "channel": "#general",
-    "bot_username": "HackerNewsBot",
-    "bot_icon_emoji": ":newspaper:",
-    "post_color": "#FF6600",
-    "fallback": "Newsbot: Your automated news aggregator."
-};
 app.get('/', (req, res) => {
     selectAndPost().then(data => {
         res.json(data);
