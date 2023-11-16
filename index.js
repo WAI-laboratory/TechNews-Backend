@@ -9,15 +9,19 @@ const request_1 = __importDefault(require("request"));
 const app = (0, express_1.default)();
 const port = process.env.PORT || 8080;
 let topStories = 'https://hacker-news.firebaseio.com/v0/topstories.json';
-app.get('/', (req, res) => {
+app.get('/hackernews', (req, res) => {
     selectAndPost().then(data => {
         res.json(data);
     }).catch(err => {
         res.status(500).send(err.message);
     });
 });
-app.post('/', (req, res) => {
-    selectAndPost();
+app.post('/hackernews', (req, res) => {
+    selectAndPost().then(data => {
+        res.json(data);
+    }).catch(err => {
+        res.status(500).send(err.message);
+    });
     res.send(`Post Hello World!`);
 });
 function selectAndPost() {

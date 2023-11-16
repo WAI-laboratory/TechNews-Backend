@@ -9,7 +9,7 @@ const port = process.env.PORT || 8080;
 
 let topStories = 'https://hacker-news.firebaseio.com/v0/topstories.json';
 
-app.get('/', (req: express.Request, res: express.Response) => {
+app.get('/hackernews', (req: express.Request, res: express.Response) => {
     selectAndPost().then(data => {
         res.json(data);
     }).catch(err => {
@@ -17,8 +17,12 @@ app.get('/', (req: express.Request, res: express.Response) => {
     });
 });
 
-app.post('/', (req: express.Request, res: express.Response) => {
-    selectAndPost();
+app.post('/hackernews', (req: express.Request, res: express.Response) => {
+    selectAndPost().then(data => {
+        res.json(data);
+    }).catch(err => {
+        res.status(500).send(err.message);
+    });
     res.send(`Post Hello World!`);
 });
 
