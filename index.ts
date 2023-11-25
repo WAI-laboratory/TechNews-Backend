@@ -35,7 +35,7 @@ function selectAndPost(): Promise<any[]> {
             } else {
                 body = JSON.parse(body);
                 let promises: Promise<any>[] = [];
-                for (let index = 0; index < 10; index++) {
+                for (let index = 0; index < body.length; index++) {
                     let linkID = body[index];
                     let url = "https://hacker-news.firebaseio.com/v0/item/" + linkID + ".json";
                     promises.push(new Promise((resolve, reject) => {
