@@ -1,0 +1,55 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Verify SSH connection
+      run: ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} "echo 'SSH connection successful'"
+
+    - name: Deploy code to SERVER
+      run: ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} "cd /root/deploy/my-nodejs-project && git pull || git@github.com:WAI-laboratory/TechNews-Backend.git /root/deploy/my-nodejs-project"
+
+    - name: Install dependencies and build project
+      run: |
+        ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} "
+          cd /root/deploy/my-nodejs-project;
+          npm install;
+          npm run build;
+        "
+
+    - name: Build and run Docker container
+      run: |
+        ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} "
+          # Build the image from the source code
+          docker build -t my-nodejs-project-image /root/deploy/my-nodejs-project;
+
+          # Stop the running container if it exists
+          CONTAINER_ID=\$(docker ps -q -f name=my-nodejs-project);
+          if [ ! -z \"\$CONTAINER_ID\" ]; then
+            docker container stop \$CONTAINER_ID;
+          fi;
+
+          # Remove the stopped container if it exists
+          CONTAINER_ID=\$(docker ps -a -q -f name=my-nodejs-project);
+          if [ ! -z \"\$CONTAINER_ID\" ]; then
+            docker container rm \$CONTAINER_ID;
+          fi;
+
+          # Run the newly built image
+          docker container run -d -p 3200:3200 --name my-nodejs-project my-nodejs-project-image;
+        "
