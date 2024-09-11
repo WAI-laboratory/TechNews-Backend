@@ -7,7 +7,7 @@ const express_1 = __importDefault(require("express"));
 const request_1 = __importDefault(require("request"));
 // Rest of your code remains the same
 const app = (0, express_1.default)();
-const port = process.env.PORT || 8080;
+const port = 3200;
 let topStories = 'https://hacker-news.firebaseio.com/v0/topstories.json';
 app.get('/hackernews', (req, res) => {
     selectAndPost().then(data => {
@@ -34,7 +34,7 @@ function selectAndPost() {
             else {
                 body = JSON.parse(body);
                 let promises = [];
-                for (let index = 0; index < 10; index++) {
+                for (let index = 0; index < body.length; index++) {
                     let linkID = body[index];
                     let url = "https://hacker-news.firebaseio.com/v0/item/" + linkID + ".json";
                     promises.push(new Promise((resolve, reject) => {

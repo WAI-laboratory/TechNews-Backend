@@ -5,7 +5,7 @@ import request from 'request';
 
 
 const app = express();
-const port = process.env.PORT || 8080;
+const port = 3200;
 
 let topStories = 'https://hacker-news.firebaseio.com/v0/topstories.json';
 
