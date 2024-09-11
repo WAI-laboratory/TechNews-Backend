@@ -20,7 +20,7 @@ jobs:
 
     - name: Verify SSH connection
       run: ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} "echo 'SSH connection successful'"
-      
+
     - name: Deploy code to SERVER
       run: |
         ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} "
@@ -39,20 +39,20 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} "
           # Build the image from the source code
-          docker build -t TechNews-image /root/deploy/TechNews;
+          docker build -t technews-image /root/deploy/TechNews;
 
           # Stop the running container if it exists
-          CONTAINER_ID=\$(docker ps -q -f name=TechNews);
+          CONTAINER_ID=\$(docker ps -q -f name=technews);
           if [ ! -z \"\$CONTAINER_ID\" ]; then
             docker container stop \$CONTAINER_ID;
           fi;
 
           # Remove the stopped container if it exists
-          CONTAINER_ID=\$(docker ps -a -q -f name=TechNews);
+          CONTAINER_ID=\$(docker ps -a -q -f name=technews);
           if [ ! -z \"\$CONTAINER_ID\" ]; then
             docker container rm \$CONTAINER_ID;
           fi;
 
           # Run the newly built image
-          docker container run -d -p 3200:3200 --name TechNews TechNews-image;
+          docker container run -d -p 3200:3200 --name technews technews-image;
         "
