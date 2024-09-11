@@ -20,14 +20,19 @@ jobs:
 
     - name: Verify SSH connection
       run: ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} "echo 'SSH connection successful'"
-
     - name: Deploy code to SERVER
-      run: ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} "cd /root/deploy/my-nodejs-project && git pull || git@github.com:WAI-laboratory/TechNews-Backend.git /root/deploy/my-nodejs-project"
+      run: ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} "
+        if [ ! -d /root/deploy/TechNews ]; then
+          mkdir -p /root/deploy/TechNews && git clone git@github.com:WAI-laboratory/TechNews-Backend.git /root/deploy/TechNews;
+        else
+          cd /root/deploy/TechNews && git pull;
+        fi
+      "
 
     - name: Install dependencies and build project
       run: |
         ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} "
-          cd /root/deploy/my-nodejs-project;
+          cd /root/deploy/TechNews;
           npm install;
           npm run build;
         "
@@ -36,20 +41,20 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} "
           # Build the image from the source code
-          docker build -t my-nodejs-project-image /root/deploy/my-nodejs-project;
+          docker build -t TechNews-image /root/deploy/TechNews;
 
           # Stop the running container if it exists
-          CONTAINER_ID=\$(docker ps -q -f name=my-nodejs-project);
+          CONTAINER_ID=\$(docker ps -q -f name=TechNews);
           if [ ! -z \"\$CONTAINER_ID\" ]; then
             docker container stop \$CONTAINER_ID;
           fi;
 
           # Remove the stopped container if it exists
-          CONTAINER_ID=\$(docker ps -a -q -f name=my-nodejs-project);
+          CONTAINER_ID=\$(docker ps -a -q -f name=TechNews);
           if [ ! -z \"\$CONTAINER_ID\" ]; then
             docker container rm \$CONTAINER_ID;
           fi;
 
           # Run the newly built image
-          docker container run -d -p 3200:3200 --name my-nodejs-project my-nodejs-project-image;
+          docker container run -d -p 3200:3200 --name TechNews TechNews-image;
         "
