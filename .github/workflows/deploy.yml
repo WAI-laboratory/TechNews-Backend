@@ -22,11 +22,7 @@ jobs:
       run: ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} "echo 'SSH connection successful'"
     - name: Deploy code to SERVER
       run: ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} "
-        if [ ! -d /root/deploy/TechNews ]; then
-          mkdir -p /root/deploy/TechNews && git clone git@github.com:WAI-laboratory/TechNews-Backend.git /root/deploy/TechNews;
-        else
-          cd /root/deploy/TechNews && git pull;
-        fi
+        cd /root/deploy/TechNews && git pull || git@github.com:WAI-laboratory/TechNews-Backend.git /root/deploy/TechNews;
       "
 
     - name: Install dependencies and build project
